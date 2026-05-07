@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>TIAO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="logo">Minha IA</div>
+
+  <div class="nav-actions">
+    <button id="themeToggle">🌙</button>
+    <button class="login-btn">Entrar</button>
+  </div>
+</nav>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h2>Chats</h2>
+    <button class="new-chat">+ Novo Chat</button>
+    <ul>
+      <li>Chat 1</li>
+    </ul>
+  </aside>
+
+  <!-- CHAT -->
+  <main class="chat-area">
+
+    <div class="chat-wrapper">
+
+      <div id="messages"></div>
+
+      <div class="input-area">
+        <input type="text" placeholder="Envie uma mensagem..." />
+        <button id="sendBtn">➤</button>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
