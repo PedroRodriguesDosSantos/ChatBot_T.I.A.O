@@ -34,13 +34,13 @@ class IAService:
             
 
 if __name__ == "__main__":
-    servico = IAservice()
+    servico = IAService()
 
     historico_teste = [
         {"role": "user", "content": "Olá! O que é uma variável em Python?"}
         ]
     
-    system_teste = "Você é um assistente educacional que ensina progamação."
+    system_teste = "Você é o TIAO, um tricologista altamente qualificado, empático e paciente."
 
     print("Enviando mensagem de teste para a IA (Groq)")
     resposta = servico.enviar_mensagem(historico_teste, system_teste)
