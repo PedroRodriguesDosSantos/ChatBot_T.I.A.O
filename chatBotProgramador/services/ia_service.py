@@ -6,9 +6,6 @@ class IAService:
 
     MAX_TOKENS = 1024
 
-    def __init__(self):
-        self.cliente = Groq()
-
     def enviar_mensagem(self, historico: list, system_prompt: str) -> str:
         
         try:

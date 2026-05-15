@@ -54,7 +54,7 @@ def chat():
     if not mensagem_usuario:
         return jsonify({"erro": "A mensagem não pode estar vazia."}), 401
     
-    historico.appens({
+    historico.append({
         "role": "user",
         "content": mensagem_usuario
     })
@@ -70,3 +70,18 @@ def chat():
     except Exception as e:
         print(f"[ERRO] {e}")
         return jsonify({"erro": str(e)}), 500
+    
+@app.route("/status")
+def status():
+
+    return jsonify({"status": "online", "bot": "TutorBot"})
+
+if __name__ == "__main__":
+    print("=" * 55)
+    print("TutorBot rodando!")
+    print("Acesse: http://localhost:5000")
+    print("API em: http://localhost:5000/chat")
+    print("Status: http://localhost:5000/status")
+    print("=" * 55)
+
+    app.run(debug=True, port=5000)
