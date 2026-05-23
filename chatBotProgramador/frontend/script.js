@@ -1,33 +1,60 @@
-const messages = document.getElementById("messages");
-const input = document.querySelector("input");
+const messagesContainer = document.getElementById("messages");
+const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 const themeBtn = document.getElementById("themeToggle");
+const sidebar = document.getElementById("sidebar");
+const sidebarToggle = document.getElementById("sidebarToggle");
+const closeSidebar = document.getElementById("closeSidebar");
+const sidebarOverlay = document.getElementById("sidebarOverlay");
 
-/* =========================
-   MENSAGENS
-========================= */
-/* Função para criar as bolhas de mensagem na tela */
+
+function openSidebar() {
+  sidebar.classList.add("open");
+  sidebarOverlay.classList.add("open");
+}
+
+function closeSidebarMenu() {
+  sidebar.classList.remove("open");
+  sidebarOverlay.classList.remove("open");
+}
+
+sidebarToggle?.addEventListener("click", openSidebar);
+closeSidebar?.addEventListener("click", closeSidebarMenu);
+sidebarOverlay?.addEventListener("click", closeSidebarMenu);
+
+
+document.querySelectorAll(".chat-item").forEach(item => {
+  item.addEventListener("click", closeSidebarMenu);
+});
+
+
 function addMessage(text, type) {
-  const div = document.createElement("div");
-  div.classList.add("message", type); // 'type' será 'user' ou 'ai'
-  div.innerText = text;
+  const messageDiv = document.createElement("div");
+  messageDiv.classList.add("message", type);
 
-  messages.appendChild(div);
-  
-  // Faz o scroll automático para a última mensagem
-  messages.scrollTop = messages.scrollHeight;
+  const contentDiv = document.createElement("div");
+  contentDiv.innerText = text;
+
+  messageDiv.appendChild(contentDiv);
+  messagesContainer.appendChild(messageDiv);
+
+  setTimeout(() => {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }, 50);
 }
 
 async function sendMessage() {
-  const text = input.value.trim();
+  const text = messageInput.value.trim();
   if (!text) return;
 
-  // 1. Adiciona a sua mensagem na tela
+  messageInput.disabled = true;
+  sendBtn.disabled = true;
+
   addMessage(text, "user");
-  input.value = "";
+  messageInput.value = "";
 
   try {
-    // 2. Envia a mensagem para o servidor Flask
+
     const response = await fetch("http://localhost:5000/chat", {
       method: "POST",
       headers: {
@@ -35,46 +62,66 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         mensagem: text,
-        historico: [] // Por enquanto enviamos o histórico vazio
+        historico: []
       })
     });
 
     const data = await response.json();
 
-    // 3. Adiciona a resposta do TIAO na tela
+
     if (data.resposta) {
       addMessage(data.resposta, "ai");
     } else {
-      addMessage("Erro: " + data.erro, "ai");
+      addMessage("Erro: " + (data.erro || "Resposta inválida"), "ai");
     }
 
   } catch (error) {
     console.error("Erro na requisição:", error);
     addMessage("Ops! O servidor está desligado ou houve um erro de conexão.", "ai");
+  } finally {
+
+    messageInput.disabled = false;
+    sendBtn.disabled = false;
+    messageInput.focus();
   }
 }
 
-/* eventos */
+
 sendBtn.addEventListener("click", sendMessage);
 
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") sendMessage();
+messageInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
 });
 
-/* =========================
-   TEMA CLARO / ESCURO
-========================= */
+
 function setTheme(isLight) {
   document.body.classList.toggle("light", isLight);
   localStorage.setItem("theme", isLight ? "light" : "dark");
-  themeBtn.innerText = isLight ? "☀️" : "🌙";
+  themeBtn.textContent = isLight ? "☀️" : "🌙";
 }
 
-/* carregar tema */
-setTheme(localStorage.getItem("theme") === "light");
 
-/* toggle */
+const savedTheme = localStorage.getItem("theme");
+setTheme(savedTheme === "light");
+
+
 themeBtn.addEventListener("click", () => {
   const isLight = !document.body.classList.contains("light");
   setTheme(isLight);
+});
+
+
+const newChatBtn = document.querySelector(".new-chat-btn");
+newChatBtn?.addEventListener("click", () => {
+  messagesContainer.innerHTML = "";
+  messageInput.focus();
+  closeSidebarMenu();
+});
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  messageInput.focus();
 });
